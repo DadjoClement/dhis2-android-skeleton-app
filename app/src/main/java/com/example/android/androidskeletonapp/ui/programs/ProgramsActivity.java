@@ -19,4 +19,8 @@ public class ProgramsActivity extends ListActivity implements OnProgramSelection
     @Override
     public void onProgramSelected(String programUid, ProgramType programType) {
     }
+
+    private void observeProgramme(){
+        ProgramsAdapter programsAdapter = new ProgramsAdapter(this);
+    }
 }
