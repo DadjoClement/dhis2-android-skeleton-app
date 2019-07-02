@@ -3,18 +3,29 @@ package com.example.android.androidskeletonapp.ui.login;
 import android.util.Patterns;
 
 import com.example.android.androidskeletonapp.R;
+import com.example.android.androidskeletonapp.data.Sdk;
 
 import org.hisp.dhis.android.core.user.User;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
+
+
+import org.hisp.dhis.android.core.D2;
+import org.hisp.dhis.android.core.d2manager.D2Configuration;
+import org.hisp.dhis.android.core.d2manager.D2Manager;
+//import org.hisp.dhis.android.core.d2.*;
 
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
+    private  String username = "android_castilla_leon", password="Android2019xx..", serverUrl ="";
 
     LoginViewModel() {
     }
@@ -44,7 +55,11 @@ public class LoginViewModel extends ViewModel {
     public Single<User> setServerUrlAndLogin(String username, String password, String serverUrl) {
         // TODO Set server url and login
 
-        return null;
+        return D2Manager.setServerUrl(serverUrl)
+                .andThen(D2Manager.instantiateD2())
+                .flatMap(d2 -> Sdk.d2().userModule().logIn(username,password))
+                .subscribeOn(Schedulers.io());
+        //return null;
     }
 
     void loginDataChanged(String serverUrl, String username, String password) {
