@@ -1,15 +1,21 @@
 package com.example.android.androidskeletonapp.data.service.forms;
 
+import com.example.android.androidskeletonapp.data.Sdk;
+
 import org.hisp.dhis.android.core.D2;
 import org.hisp.dhis.android.core.common.Coordinates;
 import org.hisp.dhis.android.core.enrollment.EnrollmentCreateProjection;
 import org.hisp.dhis.android.core.enrollment.EnrollmentObjectRepository;
 import org.hisp.dhis.android.core.maintenance.D2Error;
 import org.hisp.dhis.android.core.program.ProgramTrackedEntityAttribute;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttribute;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeCollectionRepository;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValueObjectRepository;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Flowable;
@@ -56,11 +62,45 @@ public class EnrollmentFormService {
     public Flowable<Map<String, FormField>> getEnrollmentFormFields() {
 
         return Flowable.fromCallable(() -> {
-                    return new ArrayList<ProgramTrackedEntityAttribute>(); //TODO: replace with program attributes
+
+                    //return new ArrayList<ProgramTrackedEntityAttribute>(); //TODO: replace with program attributes
+            String programUid = enrollmentRepository.get().program();
+            return Sdk.d2().programModule().programs.uid(programUid).withAllChildren().get().programTrackedEntityAttributes();
+
                 }
         ).map(programAttributeList -> {
 
             //TODO for each programAttribute create and store a FormField Object into the fieldMap object
+           for(ProgramTrackedEntityAttribute programAttribut : programAttributeList){
+               TrackedEntityAttribute attribute = Sdk.d2().trackedEntityModule()
+                       .trackedEntityAttributes
+                       .uid(programAttribut.trackedEntityAttribute().uid()).get();
+
+               TrackedEntityAttributeCollectionRepository attrRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances
+                       .trackedEntityAttributeValues
+                       .value(attribute.uid(),
+                       enrollmentRepository.get().trackedEntityInstance());
+
+        String value = null;
+        if(attrRepository.exists())
+            value = attrRepository.get().value();
+
+        if(attribute.generated() && value ==null){
+            value = d2.trackedEntityModule().reservedValueManager
+                    .getValue(attribute.uid(), null);
+
+        }
+
+
+               FormField formField = new FormField(
+                       attribute.uid(), attribute.optionSet().uid(),
+                       attribute.valueType(),
+                       attribute.formName(),
+                       value,
+                       null,
+                       !attribute.generated(),
+                       null);
+           }
 
             return fieldMap;
         });

@@ -4,11 +4,11 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.example.android.androidskeletonapp.R;
 import com.example.android.androidskeletonapp.data.service.forms.FormField;
 import com.google.android.material.textfield.TextInputEditText;
-
-import androidx.annotation.NonNull;
 
 class TextFieldHolder extends FieldHolder {
 
@@ -47,5 +47,23 @@ class TextFieldHolder extends FieldHolder {
         }
 
         // TODO set initial value, enable if editable and add value listener for text changes
+        if (!isEmpty(fieldItem.getValue())) {
+            editText.setText(fieldItem.getValue());
+        }else{
+            editText.setText(null);
+
+        }
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!hasFocus){
+                    String value = editText.getText() != null?
+                            editText.getText().toString():null;
+                    valueSavedListener.onValueSaved(fieldItem.getUid(),value);
+
+                }
+            }
+        });
     }
 }
