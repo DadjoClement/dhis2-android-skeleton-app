@@ -7,11 +7,15 @@ import com.example.android.androidskeletonapp.R;
 import com.example.android.androidskeletonapp.data.Sdk;
 import com.example.android.androidskeletonapp.ui.base.ListActivity;
 
+import org.hisp.dhis.android.core.arch.helpers.UidsHelper;
+import org.hisp.dhis.android.core.organisationunit.OrganisationUnit;
 import org.hisp.dhis.android.core.program.Program;
 import org.hisp.dhis.android.core.program.ProgramType;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.PagedList;
+
+import java.util.List;
 
 public class ProgramsActivity extends ListActivity implements OnProgramSelectionListener {
 
@@ -27,6 +31,11 @@ public class ProgramsActivity extends ListActivity implements OnProgramSelection
         recyclerView.setAdapter(adapter);
 
         // TODO Filter and sort Programs by orgUnit and displayName
+        List<OrganisationUnit> orgUnit = Sdk.d2().organisationUnitModule().organisationUnits
+                .byOrganisationUnitScope(OrganisationUnit.Scope.SCOPE_DATA_CAPTURE)
+                .get();
+
+        List<String> orgUniUids = UidsHelper.getUidsList(orgUnit);
 
         LiveData<PagedList<Program>> programs = Sdk.d2().programModule().programs
                 .withStyle()
