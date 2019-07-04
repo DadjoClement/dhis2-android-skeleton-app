@@ -4,6 +4,7 @@ import org.apache.commons.jexl2.JexlEngine;
 import org.hisp.dhis.android.core.D2;
 import org.hisp.dhis.android.core.common.ValueType;
 import org.hisp.dhis.android.core.dataelement.DataElement;
+import org.hisp.dhis.android.core.enrollment.Enrollment;
 import org.hisp.dhis.android.core.event.Event;
 import org.hisp.dhis.android.core.program.ProgramRule;
 import org.hisp.dhis.android.core.program.ProgramRuleAction;
@@ -113,7 +114,17 @@ public class RuleEngineService {
 
     public Flowable<RuleEnrollment> ruleEnrollment() {
         // TODO get rule enrollment
-        return Flowable.empty();
+        return Flowable.fromCallable(() ->{
+            Enrollment enrollment = d2.enrollmentModule().enrollments
+                    .uid(enrollmentUid).get();
+            return RuleEnrollement.create(
+                    enrollment.uid(),
+                    enrollment.incidentDate(),
+                    enrollment.enrollmentDate(),
+                    enrollment.status() != null? RuleEnrollment.Status.Valueof(enrollment),
+
+            )
+        });
     }
 
     private List<String> getProgramTrackedEntityAttributesUids(List<ProgramTrackedEntityAttribute> programTrackedEntityAttributes) {
@@ -136,6 +147,10 @@ public class RuleEngineService {
 
     private Flowable<List<RuleEvent>> getEvents(String enrollmentUid) {
         // TODO get events
+        List<Event> events = d2.eventModule().events.byEnrollmentUid()
+                .eq(enrollmentUid)
+                .get();
+        List<RuleEvent> ruleEvents = new  ArrayList<ev>()
         return Flowable.empty();
     }
 
@@ -170,12 +185,19 @@ public class RuleEngineService {
 
     private Flowable<List<Rule>> getRules() {
         // TODO get rules
-        return Flowable.empty();
+        return Flowable.fromCallable(() -> {
+            List <
+        });
     }
 
     private Flowable<List<RuleVariable>> getRuleVariables() {
         // TODO get rule variables
-        return Flowable.empty();
+        return Flowable.fromCallable(() -> {
+            List<ProgramRuleVariable> ruleVariables =
+                    d2.programModule().programRuleVariables
+                    .byProgramStageUid().eq(programUid).get();
+            return  transformToRuleVariable(ruleVariables);
+        });
     }
 
     private List<Rule> transformToRule(List<ProgramRule> programRules) {

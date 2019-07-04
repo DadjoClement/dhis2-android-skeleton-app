@@ -23,6 +23,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
+
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.processors.PublishProcessor;
@@ -110,8 +112,13 @@ public class EnrollmentFormActivity extends AppCompatActivity {
         disposable.add(
                 // TODO Zip attributes and rule engine calculation
                 engineInitialization
-                        .flatMap(next -> EnrollmentFormService.getInstance().getEnrollmentFormFields()
-                                         .subscribeOn(Schedulers.io()))
+                        .flatMap(next -> Flowable.zip(
+                                EnrollmentFormService.getInstance().getEnrollmentFormFields()
+                                         .subscribeOn(Schedulers.io())),
+                        engineService.ruleEnrollment().flatMap(ruleEnrollment ->
+                                Flowable.fromCallable(() -> ruleEngine.evaluate(ruleErol))
+                                ruleEngine.evaluate(ruleEnrollment).calll())),
+
                         .map(this::applyEffects)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
