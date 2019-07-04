@@ -1,5 +1,6 @@
 package com.example.android.androidskeletonapp.ui.main;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +22,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.hisp.dhis.android.core.event.Event;
 import org.hisp.dhis.android.core.user.User;
+import org.hisp.dhis.android.core.user.UserTableInfo;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         compositeDisposable = new CompositeDisposable();
 
         // TODO get user from cursor
+
+
         User user = getUser();
         TextView greeting = findViewById(R.id.greeting);
         greeting.setText(String.format("Hi %s!", user.displayName()));
@@ -74,7 +80,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private User getUser() {
-        return Sdk.d2().userModule().user.getWithoutChildren();
+        User user = null;
+
+       /* "User"
+        UserTableInfo.TABLE_INFO. name();
+        User.class.getSimpleName();
+        */
+
+        try(Cursor userCursor = Sdk.d2().databaseAdapter()
+                .query("SELECT * FROM User")){
+            userCursor.moveToFirst();
+            user = User.create(userCursor);
+        }
+
+        return user;
+        //return Sdk.d2().userModule().user.getWithoutChildren();
     }
 
     @Override
