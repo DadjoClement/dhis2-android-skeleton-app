@@ -153,6 +153,16 @@
             app:srcCompat="@drawable/ic_person_black_24dp" />
 
         <!--TODO add upload button-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/uploadDataButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:tint="@color/colorWhite"
+            android:layout_marginBottom="@dimen/fab_margin_with_text"
+            app:srcCompat="@drawable/ic_person_black_24dp" />
+
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

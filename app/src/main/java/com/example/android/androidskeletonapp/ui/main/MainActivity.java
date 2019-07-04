@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FloatingActionButton syncMetadataButton;
     private FloatingActionButton syncDataButton;
     // TODO - private FloatingActionButton uploadDataButton;
+    private FloatingActionButton uploadDataButton;
 
     private TextView syncStatusText;
     private ProgressBar progressBar;
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         syncMetadataButton = findViewById(R.id.syncMetadataButton);
         syncDataButton = findViewById(R.id.syncDataButton);
         // TODO use an upload button to upload data
+        uploadDataButton = findViewById(R.id.uploadDataButton);
+
 
         syncStatusText = findViewById(R.id.notificator);
         progressBar = findViewById(R.id.syncProgressBar);
@@ -132,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setEnabledButton(syncMetadataButton, false);
         setEnabledButton(syncDataButton, false);
         // TODO disable upload button
+        setEnabledButton(uploadDataButton, false);
+
     }
 
     private void enablePossibleButtons(boolean metadataSynced) {
@@ -141,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setEnabledButton(syncDataButton, true);
                 if (SyncStatusHelper.isThereDataToUpload()) {
                     // TODO enable upload button
+                    setEnabledButton(uploadDataButton, true);
                 }
             }
         }
