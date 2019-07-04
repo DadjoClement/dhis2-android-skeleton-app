@@ -37,12 +37,12 @@ public class DataSetReportsAdapter extends PagedListAdapter<DataSetReport, ListI
         DataSetReport dataSetReport = getItem(position);
 
         // TODO Set meaningful texts to textViews
-        holder.title.setText("");
-        holder.subtitle1.setText("");
-        holder.subtitle2.setText("");
+        holder.title.setText(dataSetReport.dataSetDisplayName().toString());
+        holder.subtitle1.setText(dataSetReport.organisationUnitDisplayName().toString());
+        holder.subtitle2.setText(dataSetReport.periodType().name().toString());
 
         // TODO Set value count
-        holder.rightText.setText("");
+        holder.rightText.setText(dataSetReport.valueCount().toString());
 
         holder.icon.setImageResource(R.drawable.ic_assignment_black_24dp);
         setBackgroundColor(R.color.colorAccentDark, holder.icon);
