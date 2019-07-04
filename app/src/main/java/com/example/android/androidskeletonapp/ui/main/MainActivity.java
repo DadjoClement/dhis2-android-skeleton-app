@@ -1,5 +1,6 @@
 package com.example.android.androidskeletonapp.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -270,6 +271,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             wipeData();
         } else if (id == R.id.navExit) {
             compositeDisposable.add(logOut(this));
+        }else if(id == R.id.navWipeData){
+
         }
 
         DrawerLayout drawer = findViewById(R.id.drawerLayout);
