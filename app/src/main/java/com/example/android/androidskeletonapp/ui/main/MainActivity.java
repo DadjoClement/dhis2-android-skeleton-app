@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private FloatingActionButton syncMetadataButton;
     private FloatingActionButton syncDataButton;
-    // TODO - private FloatingActionButton uploadDataButton;
     private FloatingActionButton uploadDataButton;
 
     private TextView syncStatusText;
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void inflateMainView() {
         syncMetadataButton = findViewById(R.id.syncMetadataButton);
         syncDataButton = findViewById(R.id.syncDataButton);
-        // TODO use an upload button to upload data
+        // TODO bind uploadDataButton to "uploadDataButton" view
         uploadDataButton = findViewById(R.id.uploadDataButton);
 
 
@@ -115,6 +114,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             syncStatusText.setText(R.string.syncing_data);
             downloadData();
         });
+
+        uploadDataButton.setOnClickListener(view -> {
+            setSyncing();
+            Snackbar.make(view, "Uploading data", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            syncStatusText.setText(R.string.upload_data);
+
+            Observable.fromCallable(Sdk.d2().trackedEntityModule().trackedEntityInstances.upload())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnComplete(this::setSyncingFinished)
+                    .subscribe();
+
+        });
+        // TODO Listen to uploadDataButton and execute these actions:
+
+            // TODO Set syncing
+            // TODO Show a snackbar to notify about the action
+
+            // TODO trigger data upload and subscribe (do not subscribe on the main thread!!!)
+            // TODO You have to use, at least: subscribeOn(), observeOn(), doOnComplete(), subscribe()
+            // TODO Call setSyncFinished on complete
     }
 
     private void setSyncing() {
